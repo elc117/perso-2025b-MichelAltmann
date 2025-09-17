@@ -1,15 +1,15 @@
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Api (startServer) where
 
-import qualified Data.Text as T
 import Control.Monad.IO.Class (liftIO)
-import Network.HTTP.Types (unauthorized401, internalServerError500)
 import Data.Aeson (decode, object, (.=))
+import qualified Data.Text as T
 import Database (connectDB, createTables, createTestUser)
-import Handlers (getUserHandler, getUserLoginHandler, getEmailHandler, createUserHandler, getUsernameHandler)
-import Types (Login (..), User (..), NewUser (..))
+import Handlers (createUserHandler, getEmailHandler, getUserHandler, getUserLoginHandler, getUsernameHandler)
+import Network.HTTP.Types (internalServerError500, unauthorized401)
+import Types (Login (..), NewUser (..), User (..))
 import Utils (userToJson)
 import Web.Scotty
 
@@ -34,8 +34,11 @@ startServer = do
 
     put "/signup" $ do
       bodyData <- jsonData :: ActionM NewUser
+      -- Printing received data for debugging
+      liftIO $ print bodyData
+
       -- Constructing NewUser from parsed JSON
-      let NewUser{ username = username', nickname = nickname', email = email', password = password', birthday = birthday', biography = biography', profileImage = profileImage', backgroundImage = backgroundImage' } = bodyData
+      let NewUser {username = username', email = email', password = password', birthday = birthday'} = bodyData
 
       maybeEmail <- liftIO $ getEmailHandler conn email'
       maybeUsername <- liftIO $ getUsernameHandler conn username'
@@ -44,29 +47,32 @@ startServer = do
         -- Checking email
         (Just _, _) -> do
           status unauthorized401
-          json (object ["error" .= ("Email already exists" :: String)])
+          json (object ["message" .= ("Email already in use" :: String)])
         -- Checking username
         (_, Just _) -> do
           status unauthorized401
-          json (object ["error" .= ("Username already exists" :: String)])
+          json (object ["message" .= ("Username already in use" :: String)])
         -- If both are available create the user
         (Nothing, Nothing) -> do
           -- Insert new user into the database
           success <- liftIO $ createUserHandler conn bodyData
           if success
-            then json (object ["success" .= ("User created successfully" :: String)])
+            then json (object ["message" .= ("User created successfully" :: String)])
             else do
               status internalServerError500
-              json (object ["error" .= ("Failed to create user" :: String)])
+              json (object ["message" .= ("Failed to create user" :: String)])
 
     -- Login route
     post "/login" $ do
       bodyData <- jsonData :: ActionM Login
-      let Login { email = email', password = password' } = bodyData
+      let Login {username = username', password = password'} = bodyData
 
-      maybeUser <- liftIO $ getUserLoginHandler conn email' password'
+      -- Printing received data for debugging
+      liftIO $ print bodyData
+
+      maybeUser <- liftIO $ getUserLoginHandler conn username' password'
       case maybeUser of
         Just user -> json (userToJson user)
         Nothing -> do
           status unauthorized401
-          json (object ["error" .= ("Invalid email or password" :: String)])
+          json (object ["error" .= ("Invalid username or password" :: String)])

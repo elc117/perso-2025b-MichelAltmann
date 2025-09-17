@@ -8,6 +8,17 @@ and this project adheres to the
 
 ## Unreleased
 
+### Changed
+
+- Changed error / success messages for just message objects for compatibility with the application
+- Changed queries related to login, from email authentication to username authentication
+
+### Removed
+
+- Removed unnecessary fields in NewUser
+
+## 0.1.0.1 - 2025-09-17
+
 ### Added
 
 - Main just calls the api startServer function

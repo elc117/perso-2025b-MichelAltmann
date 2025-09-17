@@ -48,32 +48,24 @@ instance ToJSON User
 
 data NewUser = NewUser
   { username :: Text,
-    nickname :: Maybe Text,
     email :: Text,
     password :: Text,
-    birthday :: Day,
-    biography :: Maybe Text,
-    profileImage :: Maybe Text,
-    backgroundImage :: Maybe Text
+    birthday :: Day
   }
   deriving (Show, Generic)
 
-instance FromJSON NewUser
+instance FromJSON NewUser 
 
 instance ToRow NewUser where
-  toRow (NewUser u n e p b bio pi bi) =
+  toRow (NewUser u e p b) =
     [ toField u,
-      toField n,
       toField e,
       toField p,
-      toField b,
-      toField bio,
-      toField pi,
-      toField bi
+      toField b
     ]
 -- Login request data type
 data Login = Login
-  { email :: Text,
+  { username :: Text,
     password :: Text
   }
   deriving (Show, Generic)

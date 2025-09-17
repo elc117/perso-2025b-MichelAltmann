@@ -50,8 +50,8 @@ getUserById conn userId = do
 
 -- Getting user by email and password
 getUserLogin :: Connection -> T.Text -> T.Text -> IO (Maybe User)
-getUserLogin conn email password = do
-  rows <- query conn "SELECT * FROM users WHERE email = ? AND password = ?" (email, password)
+getUserLogin conn username password = do
+  rows <- query conn "SELECT * FROM users WHERE username = ? AND password = ?" (username, password)
   return $ case rows of
     [user] -> Just user
     _ -> Nothing
@@ -76,7 +76,7 @@ getUsername conn username = do
 createUser :: Connection -> NewUser -> IO Bool
 createUser conn newUser = do
   execute conn
-    "INSERT OR IGNORE INTO users (username, nickname, email, password, birthday, biography, profileImage, backgroundImage) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+    "INSERT OR IGNORE INTO users (username, email, password, birthday) VALUES (?, ?, ?, ?)"
     newUser
   n <- changes conn
   return (n > 0)
