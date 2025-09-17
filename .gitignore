@@ -1,0 +1,4 @@
+*.cache
+/dist-newstyle
+/.stack-work
+*.db

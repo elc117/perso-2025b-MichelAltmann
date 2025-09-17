@@ -1,0 +1,42 @@
+cabal-version:       2.2
+
+name:                CMChatAPI
+version:             0.1.0.0
+-- synopsis:
+-- description:
+homepage:            https://github.com/githubuser/CMChatAPI#readme
+license:             BSD-3-Clause
+license-file:        LICENSE
+author:              Author name here
+maintainer:          example@example.com
+copyright:           2025 Author name here
+category:            Web
+build-type:          Simple
+extra-source-files:  README.md
+                     CHANGELOG.md
+
+executable CMChatAPI
+  hs-source-dirs:      src, src/database, src/api, src/handlers, src/utils
+  main-is:             Main.hs
+  default-language:    Haskell2010
+  build-depends: base >= 4.7 && <5
+             , scotty
+             , http-types
+             , sqlite-simple
+             , text
+             , aeson
+             , time
+
+  ghc-options:         -Wall
+                       -Wcompat
+                       -Widentities
+                       -Wincomplete-record-updates
+                       -Wincomplete-uni-patterns
+                       -Wmissing-export-lists
+                       -Wmissing-home-modules
+                       -Wpartial-fields
+                       -Wredundant-constraints
+
+source-repository head
+  type:     git
+  location: https://github.com/githubuser/CMChatAPI
