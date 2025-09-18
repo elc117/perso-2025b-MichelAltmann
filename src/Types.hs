@@ -2,7 +2,7 @@
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Types (User (..), Login (..), NewUser (..), EditUser (..)) where
+module Types (User (..), Login (..), NewUser (..), EditUser (..), Friend (..), FriendRequest (..)) where
 
 import Data.Aeson (FromJSON, ToJSON)
 import Data.Text (Text)
@@ -101,3 +101,54 @@ data Login = Login
   deriving (Show, Generic)
 
 instance FromJSON Login
+
+data FriendRequest = FriendRequest
+  { userId :: Int,
+    friendUserId :: Int,
+    status :: Int,
+    friendshipDate :: Day
+  }
+  deriving (Show, Generic)
+instance FromRow FriendRequest where
+  fromRow =
+    FriendRequest
+      <$> field
+      <*> field
+      <*> field
+      <*> field
+instance ToJSON FriendRequest
+
+-- Friend combines User data with friendship status
+data Friend = Friend
+  { userId :: Int,
+    username :: Text,
+    nickname :: Maybe Text,
+    email :: Text,
+    birthday :: Day,
+    biography :: Maybe Text,
+    profileImage :: Maybe Text,
+    backgroundImage :: Maybe Text,
+    createdDate :: Day,
+    deleted :: Bool,
+    status :: Int  -- 0=pending, 1=accepted, 2=rejected
+  }
+  deriving (Show, Generic)
+
+instance FromJSON Friend
+instance ToJSON Friend
+
+-- Converting MySQL row to Friend
+instance FromRow Friend where
+  fromRow =
+    Friend
+      <$> field  -- userId
+      <*> field  -- username
+      <*> field  -- nickname
+      <*> field  -- email
+      <*> field  -- birthday
+      <*> field  -- biography
+      <*> field  -- profileImage
+      <*> field  -- backgroundImage
+      <*> field  -- createdDate
+      <*> field  -- deleted
+      <*> field  -- friendshipStatus

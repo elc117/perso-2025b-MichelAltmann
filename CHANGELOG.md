@@ -10,7 +10,19 @@ and this project adheres to the
 
 ### Added
 
+- Added friend/request POST endpoint in `Api.hs` to send friend requests
+- Added createFriendRequestHandler function in `Handlers.hs`
+- Added getFriendsByStatus function in `Database.hs`
+- Added getFriendRequest function in `Database.hs`
+- Added createFriendRequest function in `Database.hs`
+- Added test queries for inserting friend data in the database
+- Added getUserByUsername function in `Database.hs` to get user id by the username
+- Added `Friend` Type data for sending friend information
+- Added `FriendRequest` Type data for sending friend requests
+- Added `friends` table to the database to handle friend requests
 - Added editUser POST endpoint for editing user data
+- Added editUser function in `Database.hs` to handle user editing
+- Added editUserHandler function in `Handlers.hs`
 - Added editUser type to `Types.hs`
 
 ## 0.1.0.2 - 2025-09-17
