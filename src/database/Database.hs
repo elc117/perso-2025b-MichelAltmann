@@ -58,15 +58,22 @@ getUserLogin conn username password = do
 
 -- Editing user by id
 editUser :: Connection -> Int -> EditUser -> IO (Maybe EditUser)
-editUser conn userId editUser = do
+editUser conn userId editUserData = do
+  let EditUser _ uname nick email bday bio profImg bgImg = editUserData
   execute
     conn
     "UPDATE users SET username = ?, nickname = ?, birthday = ?, biography = ?, profileImage = ?, backgroundImage = ? WHERE userId = ?"
-    ( u, n, b, bio, pi, bi, userId
+    ( uname,
+      nick,
+      bday,
+      bio,
+      profImg,
+      bgImg,
+      userId
     )
   n <- changes conn
   if n > 0
-    then return (Just editUser)
+    then return (Just editUserData)
     else return Nothing
 
 -- Getting email from database
