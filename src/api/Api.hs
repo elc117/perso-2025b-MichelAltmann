@@ -1,17 +1,37 @@
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Api (startServer) where
 
+-- Base / standard libraries
 import Control.Monad.IO.Class (liftIO)
-import Data.Aeson (decode, object, (.=))
+import System.Directory (createDirectoryIfMissing, doesFileExist, removeFile)
+import System.FilePath ((</>))
+import System.Random (randomIO)
+import qualified Control.Exception as E
+import Data.Time.Clock.POSIX (getPOSIXTime)
+
+-- Text and bytestring handling
+import qualified Data.ByteString.Char8 as BS
+import qualified Data.ByteString.Lazy as BL
 import qualified Data.Text as T
+import qualified Data.Text.Lazy as TL
+
+-- Web libraries
+import Web.Scotty
+import Network.Wai
+import Network.Wai.Parse (fileContent, fileName, lbsBackEnd, parseRequestBody)
+import Network.HTTP.Types (internalServerError500, status400, status404, unauthorized401)
+
+-- JSON handling
+import Data.Aeson (object, (.=))
+
+-- Project modules
 import Database (connectDB, createTables, createTestUser)
 import Handlers (createUserHandler, getEmailHandler, getUserHandler, getUserLoginHandler, getUsernameHandler)
-import Network.HTTP.Types (internalServerError500, unauthorized401)
 import Types (Login (..), NewUser (..), User (..))
 import Utils (userToJson)
-import Web.Scotty
 
 startServer :: IO ()
 startServer = do
@@ -76,3 +96,47 @@ startServer = do
         Nothing -> do
           status unauthorized401
           json (object ["error" .= ("Invalid username or password" :: String)])
+
+    -- Image get route, serving images directly from the "images" directory
+    get "/image" $ do
+      maybeImageId <- param "imageId" `rescue` (\(_ :: E.SomeException) -> return "")
+      if TL.null maybeImageId
+        then status status400 >> json (object ["message" .= ("Bad request." :: T.Text)])
+        else do
+          let imagePath = "images" </> TL.unpack maybeImageId
+          fileExists <- liftIO $ doesFileExist imagePath
+          if fileExists
+            then file imagePath
+            else status status404 >> json (object ["message" .= ("Image not found." :: T.Text)])
+
+    -- Processing image upload route
+    post "/image" $ do
+      req <- request
+      (arams, files) <- liftIO $ parseRequestBody lbsBackEnd req
+      case files of
+        [] -> status status400 >> json (object ["message" .= ("Bad request" :: String)])
+        (_, fi) : _ -> do
+          -- Generating unique filename
+          ts <- liftIO $ round <$> getPOSIXTime
+          rnd <- liftIO (randomIO :: IO Int)
+          let origName = BS.unpack (fileName fi)
+              newName = origName ++ "_" ++ show ts ++ "_" ++ show rnd ++ ".jpg"
+              destPath = "images" </> newName
+          -- Creating directory if it doesn't exist yet
+          liftIO $ createDirectoryIfMissing True "images"
+          liftIO $ BL.writeFile destPath (fileContent fi)
+          json $ object ["imageId" .= newName]
+
+    -- Deletes image
+    delete "/image" $ do
+      maybeLast <- param "lastImageId" `rescue` (\(_ :: E.SomeException) -> return "")
+      if TL.null maybeLast
+        then status status400 >> json (object ["message" .= ("Bad request." :: String)])
+        else do
+          let imagePath = "images" </> TL.unpack maybeLast
+          exists <- liftIO $ doesFileExist imagePath
+          if not exists
+            then status status404 >> json (object ["message" .= ("Image not found." :: String)])
+            else do
+              liftIO $ removeFile imagePath
+              json $ object ["message" .= ("Image deleted successfully." :: String)]

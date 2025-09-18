@@ -23,6 +23,14 @@ executable CMChatAPI
              , scotty
              , http-types
              , sqlite-simple
+             , filepath
+             , wai
+             , random
+             , wai-extra
+             , wai-middleware-static
+             , bytestring
+             , warp
+             , directory
              , text
              , aeson
              , time

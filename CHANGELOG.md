@@ -8,6 +8,21 @@ and this project adheres to the
 
 ## Unreleased
 
+## 0.1.0.2 - 2025-09-17
+
+### Added
+
+- Added image GET endpoint for fetching images using their unique name
+- Added image POST endpoint for uploading images
+- Added image DELETE endpoint for deleting images
+- Added new related dependencies to `.cabal` file
+
+### Changed
+
+- Reorganized imports in `Api.hs` and grouped them into categories
+
+## 0.1.0.1 - 2025-09-17
+
 ### Changed
 
 - Changed error / success messages for just message objects for compatibility with the application
@@ -17,15 +32,13 @@ and this project adheres to the
 
 - Removed unnecessary fields in NewUser
 
-## 0.1.0.1 - 2025-09-17
+## 0.1.0.0 - 2025-09-17
 
 ### Added
 
-- Main just calls the api startServer function
+- Main just calls the API startServer function
 - Database for handling every database directly related action
-- Handlers for making the bridge between the api and the database
-- Api to handle each endpoint and the data processing needed for the requests
-- Types for defining each type needed for the api to work properly
+- Handlers for making the bridge between the API and the database
+- API to handle each endpoint and the data processing needed for the requests
+- Types for defining each type needed for the API to work properly
 - Utils for handling some functions
-
-## 0.1.0.0 - 2025-09-17
