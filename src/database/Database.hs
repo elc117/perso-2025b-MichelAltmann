@@ -1,13 +1,13 @@
+{-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-
-module Database (connectDB, getUserById, createTables, createTestUser, getUserLogin, getEmail, createUser, getUsername) where
+module Database (connectDB, getUserById, createTables, createTestUser, getUserLogin, getEmail, createUser, getUsername, editUser) where
 
 import qualified Data.Text as T
 import Data.Time (Day)
 import Database.SQLite.Simple
 import Database.SQLite.Simple.FromRow
-import Types (NewUser (..), User (..))
+import Types (EditUser (..), NewUser (..), User (..))
 
 -- Creating the database connection
 connectDB :: IO Connection
@@ -56,6 +56,19 @@ getUserLogin conn username password = do
     [user] -> Just user
     _ -> Nothing
 
+-- Editing user by id
+editUser :: Connection -> Int -> EditUser -> IO (Maybe EditUser)
+editUser conn userId editUser = do
+  execute
+    conn
+    "UPDATE users SET username = ?, nickname = ?, birthday = ?, biography = ?, profileImage = ?, backgroundImage = ? WHERE userId = ?"
+    ( u, n, b, bio, pi, bi, userId
+    )
+  n <- changes conn
+  if n > 0
+    then return (Just editUser)
+    else return Nothing
+
 -- Getting email from database
 getEmail :: Connection -> T.Text -> IO (Maybe T.Text)
 getEmail conn email = do
@@ -75,7 +88,8 @@ getUsername conn username = do
 -- Creating new user
 createUser :: Connection -> NewUser -> IO Bool
 createUser conn newUser = do
-  execute conn
+  execute
+    conn
     "INSERT OR IGNORE INTO users (username, email, password, birthday) VALUES (?, ?, ?, ?)"
     newUser
   n <- changes conn

@@ -1,13 +1,13 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Handlers (getUserHandler, getUserLoginHandler, getEmailHandler, createUserHandler, getUsernameHandler) where
+module Handlers (getUserHandler, getUserLoginHandler, getEmailHandler, createUserHandler, getUsernameHandler, editUserHandler) where
 
 import Control.Monad.IO.Class (liftIO)
 import qualified Data.Text as T
 import Data.Aeson (object, (.=))
-import Database (getUserById, getUserLogin, getEmail, createUser, getUsername)
+import Database (getUserById, getUserLogin, getEmail, createUser, getUsername, editUser)
 import Database.SQLite.Simple (Connection)
-import Types (User (..), NewUser (..))
+import Types (User (..), NewUser (..), EditUser (..))
 import Web.Scotty
 
 -- Handler for getting user from database using ID
@@ -17,6 +17,10 @@ getUserHandler conn uid = getUserById conn uid
 -- Handler for getting user from database using email and password
 getUserLoginHandler :: Connection -> T.Text -> T.Text -> IO (Maybe User)
 getUserLoginHandler conn email password = getUserLogin conn email password
+
+-- Handler for editing user by ID
+editUserHandler :: Connection -> Int -> EditUser -> IO (Maybe EditUser)
+editUserHandler conn uid user = editUser conn uid user
 
 -- Handler for checking if email exists in the database
 getEmailHandler :: Connection -> T.Text -> IO (Maybe T.Text)

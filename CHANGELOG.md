@@ -8,6 +8,11 @@ and this project adheres to the
 
 ## Unreleased
 
+### Added
+
+- Added editUser POST endpoint for editing user data
+- Added editUser type to `Types.hs`
+
 ## 0.1.0.2 - 2025-09-17
 
 ### Added

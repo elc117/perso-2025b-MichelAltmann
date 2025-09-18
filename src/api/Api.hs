@@ -29,8 +29,8 @@ import Data.Aeson (object, (.=))
 
 -- Project modules
 import Database (connectDB, createTables, createTestUser)
-import Handlers (createUserHandler, getEmailHandler, getUserHandler, getUserLoginHandler, getUsernameHandler)
-import Types (Login (..), NewUser (..), User (..))
+import Handlers (createUserHandler, getEmailHandler, getUserHandler, getUserLoginHandler, getUsernameHandler, editUserHandler)
+import Types (Login (..), NewUser (..), User (..), EditUser (..))
 import Utils (userToJson)
 
 startServer :: IO ()
@@ -51,6 +51,21 @@ startServer = do
       case maybeUser of
         Just user -> json (userToJson user)
         Nothing -> text "User not found"
+    
+    -- Edit user by ID
+    post "/editUser" $ do
+      bodyData <- jsonData :: ActionM EditUser
+      -- Printing received data for debugging
+      liftIO $ print bodyData
+      let EditUser {userId = uid} = bodyData
+      maybeUser <- liftIO $ editUserHandler conn uid bodyData
+      case maybeUser of
+        Just editUser -> do
+          liftIO $ print editUser
+          json editUser
+        Nothing -> do
+          status internalServerError500
+          json (object ["message" .= ("Failed to edit user" :: String)])
 
     put "/signup" $ do
       bodyData <- jsonData :: ActionM NewUser

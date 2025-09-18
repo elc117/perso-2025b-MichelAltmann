@@ -11,7 +11,7 @@ import Types (User (..))
 userToJson :: User -> Value
 userToJson user =
   object
-    [ "id" .= userId user,
+    [ "userId" .= userId user,
       "username" .= username user,
       "nickname" .= nickname user,
       "email" .= email user,

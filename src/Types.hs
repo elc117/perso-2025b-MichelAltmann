@@ -2,7 +2,7 @@
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Types (User (..), Login (..), NewUser (..)) where
+module Types (User (..), Login (..), NewUser (..), EditUser (..)) where
 
 import Data.Aeson (FromJSON, ToJSON)
 import Data.Text (Text)
@@ -27,6 +27,8 @@ data User = User
     deleted :: Bool
   }
   deriving (Show, Generic)
+
+instance FromJSON User
 
 -- Converting MySQL row to User
 instance FromRow User where
@@ -63,6 +65,34 @@ instance ToRow NewUser where
       toField p,
       toField b
     ]
+
+
+-- Data type for editing user
+data EditUser = EditUser
+  { userId :: Int,
+    username :: Text,
+    nickname :: Maybe Text,
+    email :: Text,
+    birthday :: Day,
+    biography :: Maybe Text,
+    profileImage :: Maybe Text,
+    backgroundImage :: Maybe Text
+  }
+  deriving (Show, Generic)
+
+instance FromJSON EditUser
+instance ToJSON EditUser
+instance ToRow EditUser where
+  toRow (EditUser _ u n e b bio pi bi) =
+    [ toField u,
+      toField n,
+      toField e,
+      toField b,
+      toField bio,
+      toField pi,
+      toField bi
+    ]
+
 -- Login request data type
 data Login = Login
   { username :: Text,
