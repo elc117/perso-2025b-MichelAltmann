@@ -29,7 +29,7 @@ import Data.Aeson (object, (.=))
 
 -- Project modules
 import Database (connectDB, createTables, createTestUser)
-import Handlers (createUserHandler, getEmailHandler, getUserHandler, getUserLoginHandler, getUsernameHandler, editUserHandler)
+import Handlers (getUserHandler, getUserLoginHandler, getEmailHandler, createUserHandler, getUsernameHandler, editUserHandler, createFriendRequestHandler, getFriendsRequestHandler, HandlerResult(..))
 import Types (Login (..), NewUser (..), User (..), EditUser (..))
 import Utils (userToJson)
 
@@ -44,7 +44,7 @@ startServer = do
       text "Oiiii ta funcionando :)"
 
     -- Get a single user by ID
-    get "/users/:id" $ do
+    get "/users" $ do
       uidParam <- param "id"
       let uid = (read uidParam :: Int)
       maybeUser <- liftIO $ getUserHandler conn uid
@@ -155,3 +155,14 @@ startServer = do
             else do
               liftIO $ removeFile imagePath
               json $ object ["message" .= ("Image deleted successfully." :: String)]
+
+    -- Send friend request
+    post "/friend/request" $ do
+      userId <- param "userId"
+      friendUsername <- param "friendUsername"
+      maybeError <- liftIO $ createFriendRequestHandler conn userId friendUsername
+      case maybeError of
+        Nothing -> json (object ["message" .= ("Friend request sent successfully" :: String)])
+        Just errMsg -> do
+          status unauthorized401
+          json (object ["message" .= errMsg])

@@ -11,6 +11,8 @@ and this project adheres to the
 ### Added
 
 - Added editUser POST endpoint for editing user data
+- Added editUser function in `Database.hs` to handle user editing
+- Added editUserHandler function in `Handlers.hs`
 - Added editUser type to `Types.hs`
 
 ## 0.1.0.2 - 2025-09-17
