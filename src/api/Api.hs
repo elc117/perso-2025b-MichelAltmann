@@ -29,7 +29,7 @@ import Data.Aeson (object, (.=))
 
 -- Project modules
 import Database (connectDB, createTables, createTestUser)
-import Handlers (getUserHandler, getUserLoginHandler, getEmailHandler, createUserHandler, getUsernameHandler, editUserHandler, createFriendRequestHandler, getFriendsRequestHandler, HandlerResult(..))
+import Handlers (getUserHandler, getUserLoginHandler, getEmailHandler, createUserHandler, getUsernameHandler, editUserHandler, createFriendRequestHandler, getFriendsRequestHandler, getFriendsByStatusHandler, acceptFriendRequestHandler, refuseFriendRequestHandler)
 import Types (Login (..), NewUser (..), User (..), EditUser (..))
 import Utils (userToJson)
 
@@ -37,7 +37,7 @@ startServer :: IO ()
 startServer = do
   conn <- connectDB
   createTables conn
-  createTestUser conn
+  -- createTestUser conn
   scotty 3000 $ do
     -- Home route
     get "/" $ do
@@ -101,10 +101,6 @@ startServer = do
     post "/login" $ do
       bodyData <- jsonData :: ActionM Login
       let Login {username = username', password = password'} = bodyData
-
-      -- Printing received data for debugging
-      liftIO $ print bodyData
-
       maybeUser <- liftIO $ getUserLoginHandler conn username' password'
       case maybeUser of
         Just user -> json (userToJson user)
@@ -155,6 +151,35 @@ startServer = do
             else do
               liftIO $ removeFile imagePath
               json $ object ["message" .= ("Image deleted successfully." :: String)]
+
+    -- Get friend request by id and status
+    get "/friends" $ do
+      userId <- param "userId"
+      statusParam <- param "status"
+      friendsRequests <- liftIO $ getFriendsByStatusHandler conn userId statusParam
+      json friendsRequests
+
+    -- Accept friend request
+    post "/friend/request/accept" $ do
+      userId <- param "userId"
+      friendId <- param "friendId"
+      success <- liftIO $ acceptFriendRequestHandler conn userId friendId
+      if success
+        then json (object ["message" .= ("Friend request accepted" :: String)])
+        else do
+          status internalServerError500
+          json (object ["message" .= ("Failed to accept friend request" :: String)])
+
+    -- Reject friend request
+    post "/friend/request/refuse" $ do
+      userId <- param "userId"
+      friendId <- param "friendId"
+      success <- liftIO $ refuseFriendRequestHandler conn userId friendId
+      if success
+        then json (object ["message" .= ("Friend request refused" :: String)])
+        else do
+          status internalServerError500
+          json (object ["message" .= ("Failed to refuse friend request" :: String)])
 
     -- Send friend request
     post "/friend/request" $ do

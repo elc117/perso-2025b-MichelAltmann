@@ -8,9 +8,9 @@ module Handlers
     getUsernameHandler,
     editUserHandler,
     createFriendRequestHandler,
-    getFriendsRequestHandler,
     getFriendsByStatusHandler,
-    HandlerResult (..),
+    acceptFriendRequestHandler,
+    refuseFriendRequestHandler
   )
 where
 
@@ -18,7 +18,7 @@ import Control.Exception (SomeException, try)
 import Control.Monad.IO.Class (liftIO)
 import Data.Aeson (object, (.=))
 import qualified Data.Text as T
-import Database (createFriendRequest, createUser, editUser, getEmail, getFriendRequest, getFriendsByStatus, getUserById, getUserLogin, getUsername, getUserIdByUsername)
+import Database (createFriendRequest, createUser, editUser, getEmail, getFriendsByStatus, getUserById, getUserLogin, getUsername, getUserIdByUsername, getHaveFriendRequest, acceptFriendRequest, refuseFriendRequest)
 import Database.SQLite.Simple (Connection)
 import Types (EditUser (..), Friend (..), NewUser (..), User (..), FriendRequest (..))
 import Web.Scotty
@@ -64,8 +64,16 @@ createFriendRequestHandler conn userId friendUsername = do
 
 -- Handler for getting friend requests
 getFriendsRequestHandler :: Connection -> Int -> Int -> IO (Bool)
-getFriendsRequestHandler conn userId friendUserId = getFriendRequest conn userId friendUserId
+getFriendsRequestHandler conn userId friendUserId = getHaveFriendRequest conn userId friendUserId
 
 -- Handler for getting friends by status
 getFriendsByStatusHandler :: Connection -> Int -> Int -> IO [Friend]
 getFriendsByStatusHandler conn userId status = getFriendsByStatus conn userId status
+
+-- Handler for accepting a friend request
+acceptFriendRequestHandler :: Connection -> Int -> Int -> IO (Bool)
+acceptFriendRequestHandler conn userId friendUserId = acceptFriendRequest conn userId friendUserId
+
+-- Handler for refusing a friend request
+refuseFriendRequestHandler :: Connection -> Int -> Int -> IO (Bool)
+refuseFriendRequestHandler conn userId friendUserId = refuseFriendRequest conn userId friendUserId
