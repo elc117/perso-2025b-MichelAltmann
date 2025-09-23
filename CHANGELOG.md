@@ -10,10 +10,18 @@ and this project adheres to the
 
 ### Added
 
+- Added refuseFriendRequest query in `Database.hs`
+- Added acceptFriendRequest query in `Database.hs`
+- Added refuseFriendRequestHandler function in `Handlers.hs`
+- Added acceptFriendRequestHandler function in `Handlers.hs`
+- Added getFriendByStatus function in `Handlers.hs`
+- Added friends/ GET endpoint in `Api.hs` to get user friends by userId and status
+- Added friend/request/refuce POST endpoint in `Api.hs` to refuse friend requests
+- Added friend/request/accept POST endpoint in `Api.hs` to accept friend requests
 - Added friend/request POST endpoint in `Api.hs` to send friend requests
 - Added createFriendRequestHandler function in `Handlers.hs`
 - Added getFriendsByStatus function in `Database.hs`
-- Added getFriendRequest function in `Database.hs`
+- Added getHaveFriendRequest function in `Database.hs`
 - Added createFriendRequest function in `Database.hs`
 - Added test queries for inserting friend data in the database
 - Added getUserByUsername function in `Database.hs` to get user id by the username
@@ -24,6 +32,16 @@ and this project adheres to the
 - Added editUser function in `Database.hs` to handle user editing
 - Added editUserHandler function in `Handlers.hs`
 - Added editUser type to `Types.hs`
+
+### Changed
+
+- Changed getFriendRequest to getHaveFriendRequest because its only a true/false value returned
+- Changed table name `users` -> `user`
+- Changed table name `friends` -> `friend`
+
+### Removed
+
+- Removed getFriendsRequestHandler
 
 ## 0.1.0.2 - 2025-09-17
 

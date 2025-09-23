@@ -29,7 +29,7 @@ import Data.Aeson (object, (.=))
 
 -- Project modules
 import Database (connectDB, createTables, createTestUser)
-import Handlers (getUserHandler, getUserLoginHandler, getEmailHandler, createUserHandler, getUsernameHandler, editUserHandler, createFriendRequestHandler, getFriendsRequestHandler, getFriendsByStatusHandler, acceptFriendRequestHandler, refuseFriendRequestHandler)
+import Handlers (getUserHandler, getUserLoginHandler, getEmailHandler, createUserHandler, getUsernameHandler, editUserHandler, createFriendRequestHandler, getFriendsByStatusHandler, acceptFriendRequestHandler, refuseFriendRequestHandler)
 import Types (Login (..), NewUser (..), User (..), EditUser (..))
 import Utils (userToJson)
 
