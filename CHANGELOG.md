@@ -10,6 +10,29 @@ and this project adheres to the
 
 ### Added
 
+- Added getImageHandler to `Handlers.hs`
+- Added uploadImageHandler to `Handlers.hs`
+- Added removeImageHandler to `Handlers.hs`
+
+### Changed
+
+- Changed error/logic treatment from every API endpoint functions to the corresponding handlers
+
+### Removed
+
+- Removed utils completely since they weren't being used
+- Cleaned up some non used imports
+
+## 0.1.1 - 2025-09-25
+
+### Added
+
+- Added `SocketServer.hs` file to manage everything WebSocket related
+- Added real time messaging with WebSockets
+- Added SocketMessage type to `Types.hs`
+- Added Client type to `Types.hs`
+- Added ServerState type to `Types.hs`
+- Added ChatServer type to `Types.hs`
 - Added refuseFriendRequest query in `Database.hs`
 - Added acceptFriendRequest query in `Database.hs`
 - Added refuseFriendRequestHandler function in `Handlers.hs`

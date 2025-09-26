@@ -4,9 +4,7 @@
 module Database (connectDB, getUserById, createTables, createTestUser, getUserLogin, getEmail, createUser, getUsername, editUser, createFriendRequest,getFriendsByStatus, getUserIdByUsername, getHaveFriendRequest, acceptFriendRequest, refuseFriendRequest) where
 
 import qualified Data.Text as T
-import Data.Time (Day)
 import Database.SQLite.Simple
-import Database.SQLite.Simple.FromRow
 import Types (EditUser (..), NewUser (..), User (..), FriendRequest (..), Friend (..))
 
 -- Creating the database connection
