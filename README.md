@@ -133,6 +133,10 @@ O projeto está usando as seguintes bibliotecas:
 
 
 
+https://github.com/user-attachments/assets/50ee8113-1145-4045-9d22-e797f868c34c
+
+
+
 ## Referências
 
 - https://hackage.haskell.org/packages/search?terms=socket.io - Ultima versão do Socket.IO em 2020
