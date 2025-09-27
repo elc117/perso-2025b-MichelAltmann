@@ -10,6 +10,7 @@ and this project adheres to the
 
 ### Added
 
+- Added `Tests.hs` file to test all the necessary Handlers
 - Added getImageHandler to `Handlers.hs`
 - Added uploadImageHandler to `Handlers.hs`
 - Added removeImageHandler to `Handlers.hs`
