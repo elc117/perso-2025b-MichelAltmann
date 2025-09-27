@@ -18,7 +18,7 @@ extra-source-files:  README.md
 executable CMChatAPI
   hs-source-dirs:      src, src/database, src/api, src/handlers
   main-is:             Main.hs
-  other-modules:       Api, Database, Handlers, SocketServer, Types
+  other-modules:       Api, Types
   default-language:    Haskell2010
   build-depends: base >= 4.7 && <5
              , websockets
@@ -48,6 +48,27 @@ executable CMChatAPI
                        -Wmissing-home-modules
                        -Wpartial-fields
                        -Wredundant-constraints
+
+test-suite CMChatAPI-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      src/tests, src, src/database, src/handlers
+  main-is:             Tests.hs
+  other-modules:       Database, Handlers, Types
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5
+                     , websockets
+                     , HUnit
+                     , sqlite-simple
+                     , containers
+                     , stm
+                     , text
+                     , wai-extra
+                     , filepath
+                     , directory
+                     , random
+                     , time
+                     , bytestring
+                     , aeson
 
 source-repository head
   type:     git
